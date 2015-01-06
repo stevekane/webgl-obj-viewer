@@ -1,0 +1,29 @@
+{
+  "name": "obj-viewer",
+  "version": "1.0.0",
+  "description": "This is a 3d object viewer",
+  "main": "server.js",
+  "scripts": {
+    "test": "node test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/stevekane/obj-viewer.git"
+  },
+  "keywords": [
+    "obj",
+    "file",
+    "webgl",
+    "viewer"
+  ],
+  "author": "Steve Kane",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/stevekane/obj-viewer/issues"
+  },
+  "homepage": "https://github.com/stevekane/obj-viewer",
+  "devDependencies": {
+    "browserify": "^8.0.3",
+    "node-static": "^0.7.6"
+  }
+}
