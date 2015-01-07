@@ -25,5 +25,8 @@
   "devDependencies": {
     "browserify": "^8.0.3",
     "node-static": "^0.7.6"
+  },
+  "dependencies": {
+    "webgl-obj-loader": "^0.1.1"
   }
 }
