@@ -1,5 +1,18 @@
 <!doctype html>
 <head></head>
 <body>
+  <script id="vertex" type="text/x-shader">
+    void main () {
+      gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+    }       
+  </script>
+  <script id="fragment" type="text/x-shader">
+    void main () {
+      gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0); 
+    } 
+  </script>
+
+  <canvas id="canvas"></canvas>
+
   <script type="text/javascript" src="/obj-viewer.js"></script>
 </body>
