@@ -19,7 +19,6 @@ function Program (gl, vs, fs) {
   var program       = gl.createProgram(vs, fs)
   var attributes    = {}
   var uniforms      = {}
-  var buffers       = {}
   var numAttributes
   var numUniforms
   var aName
@@ -35,7 +34,6 @@ function Program (gl, vs, fs) {
   for (var i = 0; i < numAttributes; ++i) {
     aName             = gl.getActiveAttrib(program, i).name
     attributes[aName] = gl.getAttribLocation(program, aName)
-    buffers[aName]    = gl.createBuffer()
   }
 
   for (var j = 0; j < numUniforms; ++j) {
@@ -46,7 +44,6 @@ function Program (gl, vs, fs) {
   this.program    = program
   this.uniforms   = uniforms
   this.attributes = attributes
-  this.buffers    = buffers
 }
 
 Program.fromDomNodes = function (gl, vSrcId, fSrcId) {
@@ -56,16 +53,6 @@ Program.fromDomNodes = function (gl, vSrcId, fSrcId) {
   var fs   = new Shader(gl, gl.FRAGMENT_SHADER, fSrc)
   
   return new Program(gl, vs, fs)
-}
-
-Program.prototype.updateBuffer = function (gl, name, chunkSize, data) {
-  var buffer = this.buffers[name]
-  var loc    = this.attributes[name]
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
-  gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW)
-  gl.enableVertexAttribArray(loc)
-  gl.vertexAttribPointer(loc, chunkSize, gl.FLOAT, false, 0, 0)
 }
 
 function Texture (gl) {
