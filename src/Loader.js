@@ -1,23 +1,15 @@
-var async      = require("async")
-var objHelpers = require("./obj-helpers")
-var Mesh       = require("./Mesh")
-var Model      = require("./Model")
-var center     = objHelpers.center
-var normalize  = objHelpers.normalize
-var parallel   = async.parallel
-var apply      = async.apply
+var async           = require("async")
+var objHelpers      = require("./obj-helpers")
+var Mesh            = require("./Mesh")
+var Model           = require("./Model")
+var fns             = require("./functions")
+var center          = objHelpers.center
+var normalize       = objHelpers.normalize
+var parallel        = async.parallel
+var apply           = async.apply
+var transformValues = fns.transformValues
 
 module.exports.loadModelFromSchema = loadModelFromSchema
-
-function transformValues (fn, obj) {
-  var out  = {}
-  var keys = Object.keys(obj)
-
-  for (var i = 0; i < keys.length; ++i) {
-    out[keys[i]] = fn(obj[keys[i]])
-  }
-  return out
-}
 
 function loadXHR (type) {
   return function loadTypedXHR (filePath, cb) {

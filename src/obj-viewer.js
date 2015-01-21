@@ -5,9 +5,10 @@ var Camera              = require("./Camera")
 var Cache               = require("./Cache")
 var glUtils             = require("./gl-utils")
 var Loader              = require("./Loader")
-var ModelSchema         = require("./ModelSchema")
+var fns                 = require("./functions")
 var monkeySchema        = require("./monkeySchema.json")
 var loadModelFromSchema = Loader.loadModelFromSchema
+var transformValues     = fns.transformValues
 var canvas              = document.getElementById("canvas")
 var gl                  = canvas.getContext("webgl")
 var program             = glUtils.Program.fromDomNodes(gl, "vertex", "fragment")
@@ -26,15 +27,22 @@ var camera = new Camera(canvas, 0, 0, -1.4, 0, 0, 0)
  * large amounts of data as they are already stored in the GPU buffers.
  */
 function bufferModels (gl, models) {
-  var modelNames = Object.keys(models)
-  var modelCount = modelNames.length
-  var buffers    = {} 
+  var modelNames     = Object.keys(models)
+  var modelCount     = modelNames.length
+  var bufferedModels = {} 
+  var bufMesh        = function (mesh) { return bufferMesh(gl, mesh) }
   var name
 
   for (var i = 0; i < modelCount; ++i) {
-
+    name                 = modelNames[i]
+    model                = models[name]
+    bufferedModels[name] = {
+      name:        name,
+      meshBuffers: transformValues(bufMesh, model.meshes),
+      //textureBuffers: transformValues(bufferTexture, model.textures)
+    }
   }
-  return buffers
+  return bufferedModels
 }
 
 function bufferMesh (gl, mesh) {
@@ -59,15 +67,14 @@ function bufferMesh (gl, mesh) {
     vertices: vertices,
     uvs:      uvs,
     normals:  normals,
-    indices: indices
+    indices:  indices
   }
 }
 
 function makeRender () {
-  var mesh     = cache.models.monkey.meshes.head
-  
-  //TODO: we have hardcoded this as an example.  Should make more general
-  var bufferedMesh = bufferMesh(gl, mesh)
+  var mesh           = cache.models.monkey.meshes.head
+  var bufferedModels = bufferModels(gl, cache.models)
+  var bufferedMesh   = bufferedModels.monkey.meshBuffers.head
 
   var modelTrans = vec3.fromValues(0, 0, 0)
   var modelScale = vec3.fromValues(1, 1, 1)
@@ -121,6 +128,7 @@ function makeRender () {
     
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferedMesh.indices)
     gl.drawElements(gl.TRIANGLES, mesh.indices.length, gl.UNSIGNED_SHORT, 0)
+
     requestAnimationFrame(render) 
   }
 }
