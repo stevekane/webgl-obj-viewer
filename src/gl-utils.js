@@ -44,8 +44,8 @@ function Program (gl, vs, fs) {
   }
 
   this.program    = program
-  this.uniforms   = uniforms,
-  this.attributes = attributes,
+  this.uniforms   = uniforms
+  this.attributes = attributes
   this.buffers    = buffers
 }
 

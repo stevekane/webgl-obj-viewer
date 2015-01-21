@@ -1,19 +1,34 @@
+var mat4 = require("gl-mat4")
+var vec3 = require("gl-vec3")
+
 module.exports = Camera
 
-function Camera (x, y, z, atX, atY, atZ) {
-  this.position = new Float32Array(3)
-  this.target   = new Float32Array(3)
-  this.up       = new Float32Array(3)
+function Camera (canvas, x, y, z, atX, atY, atZ) {
+  var viewMatrix = mat4.create()
+  var projMatrix = mat4.create()
+  var up         = vec3.fromValues(0, 1, 0)
 
-  this.position[0] = x
-  this.position[1] = y
-  this.position[2] = z
+  this.position = vec3.fromValues(x, y, z)
+  this.target   = vec3.fromValues(atX, atY, atZ)
 
-  this.target[0] = atX
-  this.target[1] = atY
-  this.target[2] = atZ
+  Object.defineProperty(this, "projectionMatrix", {
+    get: function () {
+      var angle = 50 / 180 * Math.PI
+      var ratio = canvas.clientWidth / canvas.clientHeight
 
-  this.up[0] = 0
-  this.up[1] = 1
-  this.up[2] = 0
+      return mat4.perspective(projMatrix, angle, ratio, 1, 20)
+    } 
+  })
+
+  Object.defineProperty(this, "viewMatrix", {
+    get: function () {
+      return mat4.lookAt(viewMatrix, this.position, this.target, up)
+    } 
+  })
+
+  Object.defineProperty(this, "aspectRatio", {
+    get: function () {
+      return canvas.clientWidth / canvas.clientHeight 
+    } 
+  })
 }
