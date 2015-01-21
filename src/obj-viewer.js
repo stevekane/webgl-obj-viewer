@@ -6,24 +6,17 @@ var Camera              = require("./Camera")
 var glUtils             = require("./gl-utils")
 var Loader              = require("./Loader")
 var ModelSchema         = require("./ModelSchema")
+var monkeySchema        = require("./monkeySchema.json")
 var loadModelFromSchema = Loader.loadModelFromSchema
 var canvas              = document.getElementById("canvas")
 var gl                  = canvas.getContext("webgl")
 var program             = glUtils.Program.fromDomNodes(gl, "vertex", "fragment")
 var cubeMesh            = document.getElementById("my_cube.obj").innerHTML
 
-var monkeySchema = new ModelSchema("monkey", {head: "/meshes/suzanne.obj"}, {})
-
 var clock  = new Clock
 var camera = new Camera(canvas, 0, 0, -1.4, 0, 0, 0)
 var cache = {
   models: {}
-}
-
-function loadAssets (assetHash, cb) {
-  OBJ.downloadMeshes(assetHash.meshes, function (meshes) { 
-    cb(null, {meshes: meshes}) 
-  })
 }
 
 function makeRender () {

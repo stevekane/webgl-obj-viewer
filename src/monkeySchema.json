@@ -1,0 +1,7 @@
+{
+  "name": "monkey",
+  "meshNames": {
+    "head": "/meshes/suzanne.obj"
+  },
+  "textureNames": {}
+}
