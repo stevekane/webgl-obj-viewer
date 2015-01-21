@@ -28,6 +28,7 @@
     "tape": "^3.2.0"
   },
   "dependencies": {
+    "async": "^0.9.0",
     "gl-mat4": "^1.0.1",
     "gl-vec3": "^1.0.2",
     "parse-obj": "0.0.0",
