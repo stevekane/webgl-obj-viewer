@@ -64,7 +64,6 @@ function makeRender () {
     gl.uniformMatrix4fv(program.uniforms.uViewMatrix, false, camera.viewMatrix)
     gl.uniformMatrix4fv(program.uniforms.uProjectionMatrix, false, camera.projectionMatrix)
     
-    //Point at the texture in gl.TEXTURE0
     gl.uniform1i(program.uniforms.uTexture, bufferedTexture.index)
     gl.uniform1i(program.uniforms.uBumpMap, bufferedBumpMap.index)
     
