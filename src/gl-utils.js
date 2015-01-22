@@ -132,6 +132,7 @@ function bufferMesh (gl, mesh) {
 //texture index (0-31) that this texture has been uploaded to.  
 function bufferTexture (gl, tracker, image) {
   var texture = gl.createTexture()
+  var index   = tracker.index
 
   gl.activeTexture(tracker.channels[tracker.index++])
   gl.bindTexture(gl.TEXTURE_2D, texture)
@@ -141,5 +142,8 @@ function bufferTexture (gl, tracker, image) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-  return texture
+  return {
+    index:   index,
+    texture: texture 
+  }
 }

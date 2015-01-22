@@ -23,6 +23,7 @@ function makeRender () {
   var bufferedModels  = bufferModels(gl, cache.models)
   var bufferedMesh    = bufferedModels.capsule.meshBuffers.main
   var bufferedTexture = bufferedModels.capsule.textureBuffers.main
+  var bufferedBumpMap = bufferedModels.capsule.textureBuffers.bump
 
   var modelTrans = vec3.fromValues(0, 0, 0)
   var modelScale = vec3.fromValues(1, 1, 1)
@@ -64,8 +65,8 @@ function makeRender () {
     gl.uniformMatrix4fv(program.uniforms.uProjectionMatrix, false, camera.projectionMatrix)
     
     //Point at the texture in gl.TEXTURE0
-    gl.uniform1i(program.uniforms.uTexture, 0)
-    gl.uniform1i(program.uniforms.uBumpMap, 1)
+    gl.uniform1i(program.uniforms.uTexture, bufferedTexture.index)
+    gl.uniform1i(program.uniforms.uBumpMap, bufferedBumpMap.index)
     
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferedMesh.vertices)
     gl.vertexAttribPointer(program.attributes.aPosition, 3, gl.FLOAT, false, 0, 0)
