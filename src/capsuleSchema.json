@@ -1,0 +1,9 @@
+{
+  "name": "capsule",
+  "meshNames": {
+    "main": "/meshes/capsule.obj"
+  },
+  "textureNames": {
+    "main": "/meshes/capsule0.jpg"
+  }
+}

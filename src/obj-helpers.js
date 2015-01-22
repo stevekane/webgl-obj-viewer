@@ -44,9 +44,9 @@ function center (array) {
     maxZ = array[i+2] > maxZ ? array[i+2] : maxZ
   }
 
-  centerX = maxX - minX 
-  centerY = maxY - minY
-  centerZ = maxZ - minZ
+  centerX = (maxX + minX) / 2
+  centerY = (maxY + minY) / 2
+  centerZ = (maxZ + minZ) / 2
 
   for (var j = 0; j < len; j+=3) {
     array[j]   -= centerX

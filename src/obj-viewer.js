@@ -7,6 +7,7 @@ var glUtils             = require("./gl-utils")
 var Loader              = require("./Loader")
 var fns                 = require("./functions")
 var monkeySchema        = require("./monkeySchema.json")
+var capsuleSchema       = require("./capsuleSchema.json")
 var loadModelFromSchema = Loader.loadModelFromSchema
 var transformValues     = fns.transformValues
 var canvas              = document.getElementById("canvas")
@@ -15,7 +16,7 @@ var program             = glUtils.Program.fromDomNodes(gl, "vertex", "fragment")
 
 var clock  = new Clock
 var cache  = new Cache
-var camera = new Camera(canvas, 0, 0, -1.4, 0, 0, 0)
+var camera = new Camera(canvas, 0, 0, -2.4, 0, 0, 0)
 
 /* We have our .obj files and textures stored in CPU memory.
  * We would like to upload the textures and model data to the GPU
@@ -72,9 +73,9 @@ function bufferMesh (gl, mesh) {
 }
 
 function makeRender () {
-  var mesh           = cache.models.monkey.meshes.head
+  var mesh           = cache.models.capsule.meshes.main
   var bufferedModels = bufferModels(gl, cache.models)
-  var bufferedMesh   = bufferedModels.monkey.meshBuffers.head
+  var bufferedMesh   = bufferedModels.capsule.meshBuffers.main
 
   var modelTrans = vec3.fromValues(0, 0, 0)
   var modelScale = vec3.fromValues(1, 1, 1)
@@ -103,9 +104,9 @@ function makeRender () {
   return function render () {
     mat4.translate(modelTransMat, modelTransMat, modelTrans)
     mat4.scale(modelScaleMat, modelScaleMat, modelScale)
-    mat4.rotateX(modelRotMat, modelRotMat, modelRot[0])
-    mat4.rotateY(modelRotMat, modelRotMat, modelRot[1])
-    mat4.rotateZ(modelRotMat, modelRotMat, modelRot[2])
+    //mat4.rotateX(modelRotMat, modelRotMat, modelRot[0])
+    //mat4.rotateY(modelRotMat, modelRotMat, modelRot[1])
+    //mat4.rotateZ(modelRotMat, modelRotMat, modelRot[2])
 
     gl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight)
     gl.clear(gl.COLOR_BUFFER_BIT)
@@ -147,7 +148,7 @@ function boot () {
 }
 
 function init () {
-  loadModelFromSchema(monkeySchema, function (err, model) {
+  loadModelFromSchema(capsuleSchema, function (err, model) {
     cache.models[model.name] = model
 
     if (err) return console.error(err)
