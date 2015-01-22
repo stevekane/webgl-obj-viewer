@@ -4,6 +4,7 @@
     "main": "/meshes/capsule.obj"
   },
   "textureNames": {
-    "main": "/meshes/capsule0.jpg"
+    "main": "/meshes/capsule0.jpg",
+    "bump": "/meshes/sample-bump.jpg"
   }
 }

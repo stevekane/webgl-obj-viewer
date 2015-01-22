@@ -34,8 +34,12 @@ function loadMesh (filePath, cb) {
 }
 
 //TODO: not implemented or in use at the moment
-function loadTexture (filePath, cb) {
-  loadBuffer(filePath, cb)
+function loadImage (filePath, cb) {
+  var img = new Image
+
+  img.onload  = function () { return cb(null, img) }
+  img.onerror = function (err) { return cb(err) }
+  img.src     = filePath
 }
 
 function createLoads (fn, hash) {
@@ -51,7 +55,7 @@ function createLoads (fn, hash) {
 
 function loadModelFromSchema (modelSchema, cb) {
   var meshLoads    = createLoads(loadMesh, modelSchema.meshNames)
-  var textureLoads = createLoads(loadTexture, modelSchema.textureNames)
+  var textureLoads = createLoads(loadImage, modelSchema.textureNames)
   var loadMeshes   = apply(parallel, meshLoads)
   var loadTextures = apply(parallel, textureLoads)
 
