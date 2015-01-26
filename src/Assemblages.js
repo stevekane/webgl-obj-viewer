@@ -4,8 +4,8 @@ var BufferedModelComponent = require("./components/BufferedModelComponent")
 
 module.exports.Renderable = Renderable
 
-function Renderable (model) {
+function Renderable (model, x, y, z) {
   Entity.call(this) 
-  PhysicsComponent(0, 0, 0, this)
+  PhysicsComponent(x, y, z, this)
   BufferedModelComponent(model, this) 
 }

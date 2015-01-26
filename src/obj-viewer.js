@@ -17,7 +17,7 @@ var program             = glUtils.Program.fromDomNodes(gl, "vertex", "fragment")
 
 var clock       = new Clock
 var cache       = new Cache
-var camera      = new Camera(canvas, 0, 0, -1.5, 0, 0, 0)
+var camera      = new Camera(canvas, 0, 0, -3.5, 0, 0, 0)
 var renderables = []
 
 function makeRender () {
@@ -44,6 +44,7 @@ function makeRender () {
     gl.uniformMatrix4fv(program.uniforms.uModelTransMatrix, false, phys.transMat)
     gl.uniformMatrix4fv(program.uniforms.uModelScaleMatrix, false, phys.scaleMat)
     gl.uniformMatrix4fv(program.uniforms.uModelRotMatrix, false, phys.rotMat)
+    gl.uniformMatrix4fv(program.uniforms.uModelMatrix, false, phys.modelMat)
     gl.uniformMatrix4fv(program.uniforms.uViewMatrix, false, camera.viewMatrix)
     gl.uniformMatrix4fv(program.uniforms.uProjectionMatrix, false, camera.projectionMatrix)
     
@@ -87,7 +88,7 @@ function init () {
     cache.models[model.name] = model
     //TODO: should refactor to use transformValues and bufferModel
     cache.bufferedModels = bufferModels(gl, cache.models)
-    renderables.push(new Renderable(cache.bufferedModels[model.name]))
+    renderables.push(new Renderable(cache.bufferedModels[model.name], 1, 1, 1))
 
     if (err) return console.error(err)
     else            boot(cache)

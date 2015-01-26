@@ -7,6 +7,7 @@ function PhysicsComponent (x,y,z,entity) {
   var rotMat   = mat4.create()
   var scaleMat = mat4.create()
   var transMat = mat4.create()
+  var modelMat = mat4.create()
 
   entity.physics              = {}
   entity.physics.position     = vec3.fromValues(x,y,z)
@@ -34,5 +35,25 @@ function PhysicsComponent (x,y,z,entity) {
       return mat4.translate(transMat, transMat, entity.physics.position)
     }
   })
+
+  Object.defineProperty(entity.physics, "modelMat", {
+    get: function () {
+      //transMat * rotMat * scaleMat
+      mat4.identity(modelMat)
+      mat4.multiply(
+        modelMat, 
+        entity.physics.transMat,
+        scaleMat
+      )
+      mat4.multiply(
+        modelMat,
+        modelMat,
+        rotMat
+      )
+        
+      return modelMat
+    } 
+  })
+
   return entity
 }

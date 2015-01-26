@@ -9,6 +9,7 @@
     uniform mat4 uModelTransMatrix;
     uniform mat4 uModelScaleMatrix;
     uniform mat4 uModelRotMatrix;
+    uniform mat4 uModelMatrix;
     uniform mat4 uViewMatrix;
     uniform mat4 uProjectionMatrix;
 
@@ -20,11 +21,15 @@
       vNormal     = aNormal; 
       vUV         = aUV;
       vRot        = uModelRotMatrix;
+      //gl_Position = uProjectionMatrix 
+      //            * uViewMatrix 
+      //            * uModelTransMatrix 
+      //            * uModelRotMatrix 
+      //            * uModelScaleMatrix 
+      //            * vec4(aPosition, 1);
       gl_Position = uProjectionMatrix 
                   * uViewMatrix 
-                  * uModelTransMatrix 
-                  * uModelRotMatrix 
-                  * uModelScaleMatrix 
+                  * uModelMatrix
                   * vec4(aPosition, 1);
     }       
   </script>
@@ -47,6 +52,11 @@
     } 
   </script>
 
+  <ul style="font-size: 32px;">
+    <li>Consolidate model transforms into single model matrix</li>
+    <li>Re-work the way buffered models/assets work so that they are implementation
+        details of the renderer and not exposed as public api</li>
+  </ul>
   <canvas id="canvas"></canvas>
 
   <script type="text/javascript" src="/obj-viewer.js"></script>
