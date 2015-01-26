@@ -74,7 +74,7 @@ Program.fromDomNodes = function (gl, vSrcId, fSrcId) {
  * need to revise and enhance it soon.
  */
 function bufferModels (gl, models) {
-  var tracker        = {
+  var tracker = {
     channels: [
       gl.TEXTURE0,
       gl.TEXTURE1,
@@ -121,10 +121,11 @@ function bufferMesh (gl, mesh) {
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mesh.indices, gl.STATIC_DRAW)
 
   return {
-    vertices: vertices,
-    uvs:      uvs,
-    normals:  normals,
-    indices:  indices
+    indexCount: mesh.indices.length,
+    vertices:   vertices,
+    uvs:        uvs,
+    normals:    normals,
+    indices:    indices
   }
 }
 
