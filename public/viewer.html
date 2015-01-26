@@ -12,6 +12,7 @@
     uniform mat4 uModelMatrix;
     uniform mat4 uViewMatrix;
     uniform mat4 uProjectionMatrix;
+    uniform mat4 uTransformMatrix;
 
     varying vec3 vNormal;
     varying vec2 vUV;
@@ -21,16 +22,7 @@
       vNormal     = aNormal; 
       vUV         = aUV;
       vRot        = uModelRotMatrix;
-      //gl_Position = uProjectionMatrix 
-      //            * uViewMatrix 
-      //            * uModelTransMatrix 
-      //            * uModelRotMatrix 
-      //            * uModelScaleMatrix 
-      //            * vec4(aPosition, 1);
-      gl_Position = uProjectionMatrix 
-                  * uViewMatrix 
-                  * uModelMatrix
-                  * vec4(aPosition, 1);
+      gl_Position = uTransformMatrix * vec4(aPosition, 1);
     }       
   </script>
   <script id="fragment" type="text/x-shader">

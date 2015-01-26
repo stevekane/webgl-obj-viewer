@@ -20,7 +20,16 @@ var cache       = new Cache
 var camera      = new Camera(canvas, 0, 0, -3.5, 0, 0, 0)
 var renderables = []
 
+function computeTransMat (out, modelMat, viewMat, projMat) {
+  mat4.identity(out)
+  mat4.multiply(out, projMat, viewMat)
+  mat4.multiply(out, out, modelMat)
+  return out
+}
+
 function makeRender () {
+  var transMat = mat4.create()
+
   gl.useProgram(program.program)
   gl.enable(gl.BLEND)
   gl.enable(gl.CULL_FACE)
@@ -39,6 +48,8 @@ function makeRender () {
     var bufferedTexture = r.bufferedModel.textureBuffers.main
     var bufferedMesh    = r.bufferedModel.meshBuffers.main
 
+    computeTransMat(transMat, phys.modelMat, camera.viewMatrix, camera.projectionMatrix)
+
     gl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight)
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
     gl.uniformMatrix4fv(program.uniforms.uModelTransMatrix, false, phys.transMat)
@@ -47,6 +58,7 @@ function makeRender () {
     gl.uniformMatrix4fv(program.uniforms.uModelMatrix, false, phys.modelMat)
     gl.uniformMatrix4fv(program.uniforms.uViewMatrix, false, camera.viewMatrix)
     gl.uniformMatrix4fv(program.uniforms.uProjectionMatrix, false, camera.projectionMatrix)
+    gl.uniformMatrix4fv(program.uniforms.uTransformMatrix, false, transMat)
     
     gl.uniform1i(program.uniforms.uTexture, bufferedTexture.index)
     
