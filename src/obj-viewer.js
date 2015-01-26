@@ -67,11 +67,15 @@ function makeRender () {
 }
 
 function makeUpdate () {
-  var r    = renderables[0]
-  var phys = r.physics
+  var r            = renderables[0]
+  var phys         = r.physics
+  var fullRotation = Math.PI / 2
+  var xRot         = Math.PI / 90
+  var yRot         = Math.PI / 180
 
   return function update () {
-    phys.rotation[1] += (Math.PI / 180)
+    phys.rotation[0] += xRot % fullRotation
+    phys.rotation[1] += yRot % fullRotation
     clock.tick()
   }
 }
@@ -89,6 +93,7 @@ function init () {
     //TODO: should refactor to use transformValues and bufferModel
     cache.bufferedModels = bufferModels(gl, cache.models)
     renderables.push(new Renderable(cache.bufferedModels[model.name], 1, 1, 1))
+    //renderables.push(new Renderable(cache.models[model.name], 1, 1, 1))
 
     if (err) return console.error(err)
     else            boot(cache)

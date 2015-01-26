@@ -1,0 +1,55 @@
+PlayerSchema
+  MeshName: "/meshes/player.obj"
+  TextureName: "/textures/players.png"
+
+  Mesh: Float32Array()
+  TextureName: Buffer()
+
+  BufferedMesh: GPUBufferHandle
+  BufferedTexture: GPUBufferedTexture
+
+  position:
+    x: 0
+    y: 0
+    z: 0
+
+  Animations: []
+
+
+in order to hydrate a player, I need to have a cached Mesh and cached Texture
+
+cache:
+  meshes: 
+    player: Buffer 
+  
+  textures: 
+    player: Buffer
+    ...
+  
+
+player
+  mesh: cache.meshes.player
+  texture: cache.textures.player
+  bufferedMesh: cache.bufferedMeshes.player
+  bufferedTexture: cache.bufferedTextures.player 
+
+player
+  Mesh: PointsToCachedBuffer (Points ~ Reference)
+  Texture: PointsToCachedBuffer
+  
+
+hydration:
+  1) Read file string names
+  2) load into CPU memory the binary data
+  3) copy these buffers to GPU memory
+
+It's probably feasible to buffer all models for a scene on a typical graphics card.
+However, there is a hard limit with buffering textures of 32 texture addresses
+
+The issue here is that for complex scenes, we may need to upload textures in our actual
+render loop in order to then use them.  Thus we probably need to hold onto the in-memory
+version of the texture in CPU memory space because we cannot simply throw it away as we
+MIGHT be able to do w/ geometries.  
+
+I need a highly polymorphic thing that can be hydrated and turned into instances
+of entities with various components
