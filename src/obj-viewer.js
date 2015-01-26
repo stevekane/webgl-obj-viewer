@@ -143,8 +143,9 @@ function init () {
   loadModelFromSchema(capsuleSchema, function (err, model) {
     cache.models[model.name] = model
     cache.bufferedModels = bufferModels(gl, cache.models)
-    renderables.push(new Renderable(cache.bufferedModels[model.name], 1, 1, 1))
+    renderables.push(new Renderable(cache.bufferedModels[model.name], .5, .5, 1))
     renderables.push(new Renderable(cache.bufferedModels[model.name], 0, 0, 0))
+    renderables.push(new Renderable(cache.bufferedModels[model.name], -.5, -.5, -1))
 
     if (err) return console.error(err)
     else            boot(cache)
