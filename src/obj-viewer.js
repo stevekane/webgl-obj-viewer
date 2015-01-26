@@ -39,6 +39,7 @@ function renderModel (renderer, camera, entity) {
   var transMat        = renderer.transformMatrix
   var bufferedMesh    = entity.bufferedModel.meshBuffers.main
   var bufferedTexture = entity.bufferedModel.textureBuffers.main
+  var gl              = renderer.gl
 
   updateTransMat(
     renderer.transformMatrix, 
@@ -55,18 +56,38 @@ function renderModel (renderer, camera, entity) {
   gl.uniformMatrix4fv(program.uniforms.uProjectionMatrix, false, projMat)
   gl.uniformMatrix4fv(program.uniforms.uTransformMatrix, false, transMat)
   
-  gl.uniform1i(program.uniforms.uTexture, bufferedTexture.index)
+  if (renderer.boundTextures.main !== bufferedTexture.index) {
+    console.log("new texture buffered " + bufferedTexture.index)
+    renderer.boundTextures.main = bufferedTexture.index
+    gl.uniform1i(program.uniforms.uTexture, bufferedTexture.index)
+  }
   
-  gl.bindBuffer(gl.ARRAY_BUFFER, bufferedMesh.vertices)
-  gl.vertexAttribPointer(program.attributes.aPosition, 3, gl.FLOAT, false, 0, 0)
+  if (renderer.boundBuffers.positions !== bufferedMesh.vertices) {
+    console.log("new vertices bound")
+    renderer.boundBuffers.positions = bufferedMesh.vertices
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferedMesh.vertices)
+    gl.vertexAttribPointer(program.attributes.aPosition, 3, gl.FLOAT, false, 0, 0)
+  }
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, bufferedMesh.normals)
-  gl.vertexAttribPointer(program.attributes.aNormal, 3, gl.FLOAT, false, 0, 0)
+  if (renderer.boundBuffers.normals !== bufferedMesh.normals) {
+    console.log("new normals bound")
+    renderer.boundBuffers.normals = bufferedMesh.normals 
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferedMesh.normals)
+    gl.vertexAttribPointer(program.attributes.aNormal, 3, gl.FLOAT, false, 0, 0)
+  }
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, bufferedMesh.uvs)
-  gl.vertexAttribPointer(program.attributes.aUV, 2, gl.FLOAT, false, 0, 0)
+  if (renderer.boundBuffers.uvs !== bufferedMesh.uvs) {
+    console.log("new uvs bound")
+    renderer.boundBuffers.uvs = bufferedMesh.uvs 
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferedMesh.uvs)
+    gl.vertexAttribPointer(program.attributes.aUV, 2, gl.FLOAT, false, 0, 0)
+  }
   
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferedMesh.indices)
+  if (renderer.boundBuffers.indices !== bufferedMesh.indices) {
+    console.log("new indices bound") 
+    renderer.boundBuffers.indices = bufferedMesh.indices
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferedMesh.indices)
+  }
   gl.drawElements(gl.TRIANGLES, bufferedMesh.indexCount, gl.UNSIGNED_SHORT, 0)
 }
 
@@ -121,7 +142,6 @@ function boot () {
 function init () {
   loadModelFromSchema(capsuleSchema, function (err, model) {
     cache.models[model.name] = model
-    //TODO: should refactor to use transformValues and bufferModel
     cache.bufferedModels = bufferModels(gl, cache.models)
     renderables.push(new Renderable(cache.bufferedModels[model.name], 1, 1, 1))
     renderables.push(new Renderable(cache.bufferedModels[model.name], 0, 0, 0))
