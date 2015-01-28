@@ -14,7 +14,6 @@ var bufferMesh          = glUtils.bufferMesh
 var Renderable          = Assemblages.Renderable
 var canvas              = document.getElementById("canvas")
 var gl                  = canvas.getContext("webgl")
-var program             = glUtils.Program.fromDomNodes(gl, "vertex", "fragment")
 
 var clock       = new Clock
 var cache       = new Cache
@@ -131,6 +130,8 @@ function boot () {
 
 function init () {
   loadModelFromSchema(cache, capsuleSchema, function (err, model) {
+    console.log(cache)
+    window.cache = cache
     if (err) return console.error(err)
     else            console.log(model)
   })

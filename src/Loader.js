@@ -48,65 +48,77 @@ function loadProgram (cache, programSchema) {
         vertex:   loadString(programSchema.vertex),
         fragment: loadString(programSchema.fragment)
       }, function (err, results) {
-        var program = new Program(programSchema.name, results.vertex, results.fragment))
-
-        return cb(err, program)
+        var program = new Program(programSchema.name, results.vertex, results.fragment)
+  
+        cache.programs[program.name] = program
+        cb(err, program)
       })
     }
 
   }
 }
 
-function loadTexture (cache, textureSchema) {
-  return function (name) {
+function loadTexture (cache) {
+  return function (textureSchema, cb) {
+    var cachedTexture = cache.textures[textureSchema.name]
+    
+    if (cachedTexture) {
+      setTimeout(cb, 1, null, cachedTexture)
+    }
+    else {
+      loadImage(textureSchema.path)(function (err, image) {
+        var texture = new Texture(textureSchema.name, image)
 
-  }
-  return function (cb) {
-              
+        cache.textures[texture.name] = texture
+        cb(err, texture)
+      })
+    }
   }
 }
 
 function loadTextures (cache, textureSchemas) {
   return function (cb) {
-    var textureNames = pluck("name", textureSchemas)
-
-    async.each(textureNames, loadTexture
+    async.map(textureSchemas, loadTexture(cache), cb)
   }
 }
 
 function loadAttributes (cache, path) {
   return function (cb) {
-    loadString(path, cb)
+    loadString(path)(cb)
   }
 }
 
-function loadMeshSchemaDependencies (cache, meshSchema) {
-  return function (cb) {
-    var textureLoads = []
-    
-    async.parallel({
-      attributes: loadAttributes(cache, meshSchema.path),
-      program:    loadProgram(cache, meshSchema.programSchema.path),
-      textures:   loadTextures(cache, meshSchema.textureSchemas)
-    }, function (err, results) {
-
-    })  
-  }
-}
-
-function loadMeshShema (cache, meshSchema) {
-  return function (cb) {
+function loadMeshSchema (cache) {
+  return function (meshSchema, cb) {
     var cachedMesh = cache.meshes[meshSchema.name]
 
     if (cachedMesh) {
       setTimeout(cb, 1, null, cachedMesh) 
     }
     else {
-      //implement
+      async.parallel({
+        attributes: loadAttributes(cache, meshSchema.path),
+        program:    loadProgram(cache, meshSchema.programSchema),
+        textures:   loadTextures(cache, meshSchema.textureSchemas)
+      }, function (err, results) {
+        var mesh = new Mesh.fromObj(
+          meshSchema.name,
+          results.attributes,
+          results.textures,
+          results.program
+        )
+        cache.meshes[mesh.name] = mesh
+        cb(err, mesh)
+      })
     }
   }
 }
 
 function loadModelFromSchema (cache, modelSchema, cb) {
-  setTimeout(cb, 1) 
+  async.map(modelSchema.meshSchemas, loadMeshSchema(cache), function (err, meshes) {
+    var model = new Model(modelSchema.name, meshes)
+
+    //TODO: cache whole model?
+    cb(err, model)
+  })
 }

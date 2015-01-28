@@ -14,7 +14,7 @@ function transformValues (fn, obj) {
 function pluck (propName, array) {
   var results = []
 
-  for (var i = 0, i < array.length; i++) {
+  for (var i = 0, len=array.length; i < len; i++) {
     results.push(array[i][propName])
   }
   return results

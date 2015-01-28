@@ -9,8 +9,8 @@
       ],
       "programSchema": {
         "name":     "standard",
-        "vertex":   "/shaders/standard.vertex",
-        "fragment": "/shaders/standard.fragment"
+        "vertex":   "/shaders/standardV.glsl",
+        "fragment": "/shaders/standardF.glsl"
       }
     }
   ]

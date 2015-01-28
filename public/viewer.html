@@ -1,50 +1,6 @@
 <!doctype html>
 <head></head>
 <body>
-  <script id="vertex" type="text/x-shader">
-    attribute vec3 aPosition;
-    attribute vec2 aUV;
-    attribute vec3 aNormal;
-
-    uniform mat4 uModelTransMatrix;
-    uniform mat4 uModelScaleMatrix;
-    uniform mat4 uModelRotMatrix;
-    uniform mat4 uModelMatrix;
-    uniform mat4 uViewMatrix;
-    uniform mat4 uProjectionMatrix;
-    uniform mat4 uTransformMatrix;
-
-    varying vec3 vNormal;
-    varying vec2 vUV;
-    varying mat4 vRot;
-
-    void main () {
-      vNormal     = aNormal; 
-      vUV         = aUV;
-      vRot        = uModelRotMatrix;
-      gl_Position = uTransformMatrix * vec4(aPosition, 1);
-    }       
-  </script>
-  <script id="fragment" type="text/x-shader">
-    precision highp float;
-
-    uniform sampler2D uTexture;
-    uniform sampler2D uBumpMap;
-
-    varying vec3 vNormal;
-    varying vec2 vUV;
-    varying mat4 vRot;
-
-    void main () {
-      vec3 faceDir    = (vRot * vec4(vNormal, 1.0)).xyz;
-      float intensity = dot(vec3(-1.0, 1.0, -1.0), faceDir); 
-      vec3 texColor   = texture2D(uTexture, vUV).xyz;
-      vec4 color      = vec4(intensity * texColor, 1.0);
-      gl_FragColor    = color;
-    } 
-  </script>
-
   <canvas id="canvas"></canvas>
-
   <script type="text/javascript" src="/obj-viewer.js"></script>
 </body>
