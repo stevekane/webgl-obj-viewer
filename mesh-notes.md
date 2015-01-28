@@ -1,6 +1,6 @@
 #JSON Schema for Mesh on Disk
 name:      "capsule"
-meshName:  "/meshes/capsule.obj"
+path:      "/meshes/capsule.obj"
 textures: [
   name: main, path: "/textures/capsule.png"
 ]

@@ -1,6 +1,8 @@
 module.exports = Cache
 
 function Cache () {
-  this.models          = {}
-  this.bufferredModels = {}
+  this.meshes   = {}
+  this.textures = {}
+  this.programs = {}
+  //...
 }

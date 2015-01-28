@@ -1,8 +1,6 @@
 module.exports = Model
 
-function Model (name, meshes, textures) {
+function Model (name, meshes) {
   this.name     = name
   this.meshes   = meshes
-  this.textures = textures
-  Object.freeze(this)
 }

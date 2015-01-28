@@ -1,10 +1,17 @@
 {
   "name": "capsule",
-  "meshNames": {
-    "main": "/meshes/capsule.obj"
-  },
-  "textureNames": {
-    "main": "/meshes/capsule0.jpg",
-    "bump": "/meshes/sample-bump.jpg"
-  }
+  "meshSchemas": [
+    {
+      "name": "capsule",
+      "path": "/meshes/capsule.obj",
+      "textureSchemas": [
+        {"name": "main", "path": "/meshes/capsule0.jpg"}
+      ],
+      "programSchema": {
+        "name":     "standard",
+        "vertex":   "/shaders/standard.vertex",
+        "fragment": "/shaders/standard.fragment"
+      }
+    }
+  ]
 }

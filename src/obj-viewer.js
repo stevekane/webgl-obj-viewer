@@ -117,17 +117,7 @@ function makeRender () {
 }
 
 function makeUpdate () {
-  var fullRotation = Math.PI / 2
-  var xRot         = Math.PI / 90
-  var yRot         = Math.PI / 180
-  var zRot         = Math.PI / 270
-
   return function update () {
-    for (var i = 0; i < renderables.length; i++) {
-      renderables[i].physics.rotation[0] += xRot % fullRotation 
-      renderables[i].physics.rotation[1] += yRot % fullRotation 
-      renderables[i].physics.rotation[2] += zRot % fullRotation 
-    }
     clock.tick()
   }
 }
@@ -140,15 +130,9 @@ function boot () {
 }
 
 function init () {
-  loadModelFromSchema(capsuleSchema, function (err, model) {
-    cache.models[model.name] = model
-    cache.bufferedModels = bufferModels(gl, cache.models)
-    renderables.push(new Renderable(cache.bufferedModels[model.name], .5, .5, 1))
-    renderables.push(new Renderable(cache.bufferedModels[model.name], 0, 0, 0))
-    renderables.push(new Renderable(cache.bufferedModels[model.name], -.5, -.5, -1))
-
+  loadModelFromSchema(cache, capsuleSchema, function (err, model) {
     if (err) return console.error(err)
-    else            boot(cache)
+    else            console.log(model)
   })
 }
 
