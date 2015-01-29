@@ -1,12 +1,33 @@
-module.exports.center    = center
-module.exports.normalize = normalize
+var OBJ      = require("webgl-obj-loader")
 
+module.exports = Geometry
+
+function Geometry (name, vertices, normals, uvs, indices) {
+  this.name     = name
+  this.vertices = new Float32Array(vertices)
+  this.indices  = new Uint16Array(indices)
+  this.normals  = new Float32Array(normals)
+  this.uvs      = new Float32Array(uvs)
+}
+
+Geometry.fromObjStr = function (name, objStr) {
+  var objBlob = new OBJ.Mesh(objStr)
+
+  return new Geometry(
+    name, 
+    normalize(center(objBlob.vertices)),
+    objBlob.vertexNormals,
+    objBlob.textures,
+    objBlob.indices
+  )
+}
+
+//MUTATES IN PLACE!
 function normalize (array) {
   var len    = array.length
   var minVal = 0
   var maxVal = 0
   var diff   = 0
-
   //find min and max
   for (var i = 0; i < len; ++i) {
     minVal = array[i] < minVal ? array[i] : minVal
@@ -22,6 +43,7 @@ function normalize (array) {
   return array
 }
 
+//MUTATES IN PLACE!
 function center (array) {
   var len     = array.length
   var minX    = 0
@@ -55,3 +77,7 @@ function center (array) {
   }
   return array
 }
+
+
+
+

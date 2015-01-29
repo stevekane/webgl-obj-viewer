@@ -3,14 +3,21 @@
   "meshSchemas": [
     {
       "name": "capsule",
-      "path": "/meshes/capsule.obj",
+      "geometrySchema": {
+        "path": "/meshes/capsule.obj",
+        "name": "capsule"
+      },
       "textureSchemas": [
-        {"name": "main", "path": "/meshes/capsule0.jpg"}
+        {
+          "name": "capsuleMain", 
+          "path": "/meshes/capsule0.jpg"
+        }
       ],
       "programSchema": {
         "name":     "standard",
         "vertex":   "/shaders/standardV.glsl",
-        "fragment": "/shaders/standardF.glsl"
+        "fragment": "/shaders/standardF.glsl",
+        "drawSrc":  "/shaders/standardDraw.js"
       }
     }
   ]

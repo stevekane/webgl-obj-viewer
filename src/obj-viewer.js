@@ -130,8 +130,16 @@ function boot () {
 
 function init () {
   loadModelFromSchema(cache, capsuleSchema, function (err, model) {
-    console.log(cache)
-    window.cache = cache
+    var capsule = new Renderable(model, 0, 0, 0)
+
+    for (var i = 0; i < capsule.model.meshes.length; i++) {
+      renderer.loadProgram(capsule.model.meshes[i].program)
+      renderer.bufferGeometry(capsule.model.meshes[i].geometry)
+      //renderer.bufferTextures(...
+    }  
+    window.renderer = renderer
+    window.cache    = cache
+
     if (err) return console.error(err)
     else            console.log(model)
   })

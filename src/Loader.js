@@ -1,5 +1,6 @@
 var async           = require("async")
 var Mesh            = require("./Mesh")
+var Geometry        = require("./Geometry")
 var Model           = require("./Model")
 var Program         = require("./Program")
 var Texture         = require("./Texture")
@@ -46,9 +47,15 @@ function loadProgram (cache, programSchema) {
     else {
       async.parallel({
         vertex:   loadString(programSchema.vertex),
-        fragment: loadString(programSchema.fragment)
+        fragment: loadString(programSchema.fragment),
+        drawSrc:  loadString(programSchema.drawSrc) //TODO: could be undefined?
       }, function (err, results) {
-        var program = new Program(programSchema.name, results.vertex, results.fragment)
+        var program = new Program(
+          programSchema.name,
+          results.vertex,
+          results.fragment,
+          results.drawSrc
+        )
   
         cache.programs[program.name] = program
         cb(err, program)
@@ -82,9 +89,21 @@ function loadTextures (cache, textureSchemas) {
   }
 }
 
-function loadAttributes (cache, path) {
+function loadGeometry (cache, geometrySchema) {
   return function (cb) {
-    loadString(path)(cb)
+    var cachedGeometry = cache.geometries[geometrySchema.name]
+
+    if (cachedGeometry) {
+      setTimeout(cb, 1, null, cachedGeometry)
+    }
+    else {
+      loadString(geometrySchema.path)(function (err, objStr) {
+        var geometry = new Geometry.fromObjStr(geometrySchema.name, objStr)
+
+        cache.geometries[geometry.name] = geometry
+        cb(err, geometry)
+      })
+    }
   }
 }
 
@@ -97,13 +116,13 @@ function loadMeshSchema (cache) {
     }
     else {
       async.parallel({
-        attributes: loadAttributes(cache, meshSchema.path),
-        program:    loadProgram(cache, meshSchema.programSchema),
-        textures:   loadTextures(cache, meshSchema.textureSchemas)
+        geometry: loadGeometry(cache, meshSchema.geometrySchema),
+        program:  loadProgram(cache, meshSchema.programSchema),
+        textures: loadTextures(cache, meshSchema.textureSchemas)
       }, function (err, results) {
-        var mesh = new Mesh.fromObj(
+        var mesh = new Mesh(
           meshSchema.name,
-          results.attributes,
+          results.geometry,
           results.textures,
           results.program
         )
@@ -115,10 +134,17 @@ function loadMeshSchema (cache) {
 }
 
 function loadModelFromSchema (cache, modelSchema, cb) {
-  async.map(modelSchema.meshSchemas, loadMeshSchema(cache), function (err, meshes) {
-    var model = new Model(modelSchema.name, meshes)
+  var cachedModel = cache.models[modelSchema.name]
 
-    //TODO: cache whole model?
-    cb(err, model)
-  })
+  if (cachedModel) {
+    setTimeout(cb, 1, null, cachedModel)
+  }
+  else {
+    async.map(modelSchema.meshSchemas, loadMeshSchema(cache), function (err, meshes) {
+      var model = new Model(modelSchema.name, meshes)
+
+      cache.models[model.name] = model
+      cb(err, model)
+    })
+  }
 }
