@@ -2,8 +2,6 @@ attribute vec3 aPosition;
 attribute vec2 aUV;
 attribute vec3 aNormal;
 
-uniform mat4 uModelTransMatrix;
-uniform mat4 uModelScaleMatrix;
 uniform mat4 uModelRotMatrix;
 uniform mat4 uModelMatrix;
 uniform mat4 uViewMatrix;
