@@ -1,0 +1,75 @@
+Need camera properties (viewMatrix, projMatrix, aspectRatio, screenSize, filters?)
+
+drawFunction (x, y, z, thetax, thetay, thetaz,sx, sy, sz, mesh) {
+  
+}
+
+Will sort render queue by following heuristic
+1) Program
+2) Textures (question is how to sort by multiple textures?  need ids for texture combos?)
+3) Z-depth (dot product of view and center of object)
+
+SOA vs AOS
+
+position = {
+  x: 0,
+  y: 0,
+  z: 0
+}
+
+position = [0, 0, 0]
+position = new Float32Array([0,0,0])
+
+positions = [position1, position2, position3]
+//expanding this looks like
+positions = [{x, y, z}, {x, y, z}]
+positions = [[x, y, z], [x, y, z]]
+positions = [Float32Array, Float32Array,...]
+
+positions     = new Float32Array(MAX_NUM_OBJECTS * 3)
+velocities    = new Float32Array(MAX_NUM_OBJECTS * 3)
+accelerations = new Float32Array(MAX_NUM_OBJECTS * 3)
+
+object = {
+  position:     {}
+  velocity:     {}
+  acceleration: {}
+}
+
+object = {
+  position: <INDEX_INTO_POSITIONS_ARRAY>
+  ...
+}
+
+position = [1,2,3, 4,3,2]
+
+object1 = {
+  position: 0
+}
+
+positions[object1.position]   === 1 //true
+positions[object1.position+1] === 2 //true
+
+function Point (x, y) {
+  this.x = x
+  this.y = y
+}
+
+ar = [point1, point2]
+ar.push("poop")
+
+ar === [point1, point2, "poop"]
+
+[0,1,2,3,  4,5,6,7,  8,9,10,11,  12,13,14,15,   ...]
+
+in C you can have a pointer which you pass around
+in javascript, you can have an arrayindex into some data structure which you pass around
+BUT you have to also pass around the data structure
+
+[adr1, adr2]
+
+your property is adr2
+
+props = [1,2]
+
+your propertyARray = props and your index is 1

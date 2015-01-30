@@ -29,6 +29,10 @@ function makeRender () {
   gl.clearColor(1.0, 1.0, 1.0, 1.0)
   gl.colorMask(true, true, true, true)
 
+  //TODO: This is a temporary placeholder "scale matrix".   not yet implemented in game
+  var scale = [1,1,1]
+
+
   return function render () {
     var ent
     var modelMat
@@ -45,15 +49,17 @@ function makeRender () {
       projMat  = camera.projectionMatrix
         
       for (var j = 0, meshCount = ent.model.meshes.length; j < meshCount; j++) {
-        renderer.drawMesh(
-          ent.physics.rotMat,
-          ent.physics.modelMat, 
-          camera.viewMatrix,
-          camera.projectionMatrix,
+        renderer.queueMesh(
+          ent.physics.position,
+          ent.physics.rotation,
+          scale, //from above, temporary
+          camera,
           ent.model.meshes[j]
         )
       }
     }
+    renderer.draw()
+    renderer.flushQueue()
 
     requestAnimationFrame(render) 
   }
@@ -75,16 +81,18 @@ function boot () {
 
 function init () {
   loadModelFromSchema(cache, capsuleSchema, function (err, model) {
-    var capsule = new Renderable(model, 0, 0, 0)
+    var capsules = [new Renderable(model, 1, 0, 0), new Renderable(model, -1, -1, 0)]
 
-    for (var i = 0; i < capsule.model.meshes.length; i++) {
-      renderer.loadProgram(capsule.model.meshes[i].program)
-      renderer.bufferGeometry(capsule.model.meshes[i].geometry)
-      //renderer.bufferTextures(...
-    }  
+    for (var j = 0; j < capsules.length; j++) {
+      capsule = capsules[j]
+      for (var i = 0; i < capsule.model.meshes.length; i++) {
+        renderer.loadProgram(capsule.model.meshes[i].program)
+        renderer.bufferGeometry(capsule.model.meshes[i].geometry)
+        //renderer.bufferTextures(...
+      }  
+      renderables.push(capsule)
+    }
   
-    renderables.push(capsule)
-
     if (err) return console.log(err)
     else            boot()
   })
