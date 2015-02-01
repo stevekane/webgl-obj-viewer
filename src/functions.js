@@ -1,5 +1,6 @@
 module.exports.transformValues = transformValues
 module.exports.pluck           = pluck
+module.exports.defined         = defined
 
 function transformValues (fn, obj) {
   var out  = {}
@@ -18,4 +19,8 @@ function pluck (propName, array) {
     results.push(array[i][propName])
   }
   return results
+}
+
+function defined (value) {
+  return value !== undefined && value !== null
 }

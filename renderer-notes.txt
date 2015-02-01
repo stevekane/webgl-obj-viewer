@@ -72,4 +72,65 @@ your property is adr2
 
 props = [1,2]
 
-your propertyARray = props and your index is 1
+your propertyArray = props and your index is 1
+
+
+MIPMAPPING
+
+800x800 texture
+400x400
+200x200
+100x100
+
+When you want to color a pixel in the GPU framebuffer based on a texture, you have to
+interpolate all the pixels from the texture that might contribute to the color
+of the pixel in your 3d space
+
+Texture Channels
+
+there are a maximum of 32 unique texture channels or addresses or whatever that you can
+utilize in the video ram.  
+
+For example, if you have a bumpmapped character you will have potentially two textures 
+needed to render the character
+
+channel-0: color texture
+channel-1: heightmap or bumpmap texture
+
+to draw a single character, you need two texture locations to be occupied
+
+You want perhaps to allocate channels such that you minimize the number of times
+that textures need to be "swapped" from CPU RAM into GPU RAM.
+
+When N (number of unique textures) > MAX_NUMBER_CHANNELS, you need to swap textures 
+in the render loop in order to draw the whole scene.  
+
+800x800 you might upload 1600x1600 which is the texture for 4 unique characters
+
+
+
+
+
+
+Working with textures
+
+Pre-buffer as many textures as possible
+we then want to associate texture names to texture channels
+values domain: 0-31 or null?
+
+{
+  "zelda": 1
+  "zelda-bump": 3
+  "ganon: null
+  "ganon-bump": null
+}
+
+when i draw zelda
+  bind texture "main" to channel 1
+  bind texture "bump" to channel 3
+
+when i draw ganon
+  find available texture channel
+  upload texture from CPU to GPU to that channel
+  store the location of that channel in the hash
+  bind texture "main" to channel where ganon texture is

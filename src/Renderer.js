@@ -1,7 +1,11 @@
 var vec3             = require("gl-vec3")
 var mat4             = require("gl-mat4")
+var fns              = require("./functions")
 var LoadedProgram    = require("./LoadedProgram")
 var BufferedGeometry = require("./BufferedGeometry")
+var defined          = fns.defined
+
+var MAX_CHANNEL_INDEX = 31
 
 module.exports = Renderer
 
@@ -28,12 +32,16 @@ function Renderer (gl) {
   this.queuePointer       = 0
   this.queue              = [new MeshJob, new MeshJob, new MeshJob]
 
-  this.loadedPrograms     = {}
-  this.bufferedGeometries = {}
-  this.boundGeometry      = null
-  this.boundProgram       = null
-  //TODO: TEXTURES is complex case...  implement
-  this.bufferedTextures   = {}
+  this.loadedPrograms        = {}
+  this.bufferedGeometries    = {}
+  this.boundTextures         = {}
+  this.textureChannelPointer = 0
+  this.boundGeometry         = null
+  this.boundProgram          = null
+
+  //TODO: debugging purposes
+  window.boundTextures = this.boundTextures
+  window.renderer      = this
 }
 
 Renderer.prototype.loadProgram = function (program) {
@@ -42,6 +50,17 @@ Renderer.prototype.loadProgram = function (program) {
 
 Renderer.prototype.bufferGeometry = function (geometry) {
   this.bufferedGeometries[geometry.name] = new BufferedGeometry(this.gl, geometry)
+}
+
+Renderer.prototype.uploadTexture = function (texture) {
+  var channel      = this.textureChannelPointer
+  var alreadyBound = defined(this.boundTextures[texture.name])
+  
+  //TODO: improve strength of this logic for bounded channels
+  if (!alreadyBound) {
+    this.boundTextures[texture.name] = channel
+    this.textureChannelPointer       = channel === MAX_CHANNEL_INDEX ? 0 : channel + 1
+  }
 }
 
 Renderer.prototype.draw = function () {

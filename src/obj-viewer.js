@@ -32,7 +32,6 @@ function makeRender () {
   //TODO: This is a temporary placeholder "scale matrix".   not yet implemented in game
   var scale = [1,1,1]
 
-
   return function render () {
     var ent
     var modelMat
@@ -60,7 +59,6 @@ function makeRender () {
     }
     renderer.draw()
     renderer.flushQueue()
-
     requestAnimationFrame(render) 
   }
 }
@@ -82,13 +80,22 @@ function boot () {
 function init () {
   loadModelFromSchema(cache, capsuleSchema, function (err, model) {
     var capsules = [new Renderable(model, 1, 0, 0), new Renderable(model, -1, -1, 0)]
+    var mesh
+    var texture
 
     for (var j = 0; j < capsules.length; j++) {
       capsule = capsules[j]
       for (var i = 0; i < capsule.model.meshes.length; i++) {
-        renderer.loadProgram(capsule.model.meshes[i].program)
-        renderer.bufferGeometry(capsule.model.meshes[i].geometry)
-        //renderer.bufferTextures(...
+        mesh = capsule.model.meshes[i]
+
+        renderer.loadProgram(mesh.program)
+        renderer.bufferGeometry(mesh.geometry)
+
+        for (var k = 0; k < mesh.textures.length; k++) {
+          texture = mesh.textures[k]
+
+          renderer.uploadTexture(texture)
+        }
       }  
       renderables.push(capsule)
     }
