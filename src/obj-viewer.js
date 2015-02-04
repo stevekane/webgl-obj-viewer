@@ -20,7 +20,7 @@ var renderables = []
 
 function makeRender () {
   //TODO: This is a temporary placeholder "scale matrix".   not yet implemented
-  var scale = [1,1,1]
+  var scale = [1,1,5]
 
   return function render () {
     var ent

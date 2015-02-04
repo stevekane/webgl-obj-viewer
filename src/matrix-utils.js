@@ -28,6 +28,9 @@ function computeRotationMatrix (rotation, rotMat) {
 }
 
 function computeScaleMatrix (scale, scaleMat) {
+  scaleMat[0]  = scale[0]
+  scaleMat[5]  = scale[1]
+  scaleMat[10] = scale[2]
   return scaleMat
 }
 
