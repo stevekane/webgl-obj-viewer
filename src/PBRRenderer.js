@@ -136,9 +136,11 @@ PBRRenderer.prototype.draw = function (camera) {
   gl.viewport(0, 0, gl.canvas.clientWidth, gl.canvas.clientHeight)
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
+  this.viewMat       = camera.viewMatrix
+  this.projectionMat = camera.projectionMatrix
+
   //sortRenderQueue(this.queue)
   while (meshJob = this.queue.pop()) {
-    console.log(meshJob.position)
     renderMeshJob(this, camera, meshJob)
   }
 }

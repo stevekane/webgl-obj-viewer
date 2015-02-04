@@ -14,7 +14,7 @@ var gl                  = canvas.getContext("webgl")
 
 var clock       = new Clock
 var cache       = new Cache
-var camera      = new Camera(canvas, 0, 0, -3.5, 0, 0, 0)
+var camera      = new Camera(canvas, 0, 0, -3, 0, 0, 0)
 var pbrRenderer = new PBRRenderer(gl)
 var renderables = []
 
@@ -24,15 +24,9 @@ function makeRender () {
 
   return function render () {
     var ent
-    var modelMat
-    var viewMat
-    var projMat
 
     for (var i = 0, len = renderables.length; i < len; i++) {
-      ent      = renderables[i]
-      modelMat = ent.physics.modelMat
-      viewMat  = camera.viewMatrix 
-      projMat  = camera.projectionMatrix
+      ent = renderables[i]
         
       for (var j = 0, meshCount = ent.model.meshes.length; j < meshCount; j++) {
         pbrRenderer.queue.push(
@@ -44,7 +38,7 @@ function makeRender () {
       }
     }
     pbrRenderer.draw(camera)
-    //requestAnimationFrame(render) 
+    requestAnimationFrame(render) 
   }
 }
 
@@ -55,6 +49,7 @@ function makeUpdate () {
       renderables[i].physics.rotation[1] += (Math.PI / 180) % (Math.PI * 2)
       renderables[i].physics.rotation[2] += (Math.PI / 180) % (Math.PI * 2)
     }
+    camera.position[2] -= .01
     clock.tick()
   }
 }
