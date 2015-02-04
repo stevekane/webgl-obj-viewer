@@ -1,11 +1,13 @@
 var vec3             = require("gl-vec3")
 var mat4             = require("gl-mat4")
+var webglew          = require("webglew")
 var fns              = require("./functions")
 var LoadedProgram    = require("./LoadedProgram")
 var BufferedGeometry = require("./BufferedGeometry")
+var LoadedTexture    = require("./LoadedTexture")
 var defined          = fns.defined
 
-var MAX_CHANNEL_INDEX = 31
+var MAX_CHANNEL_INDEX = 28
 
 module.exports = Renderer
 
@@ -19,8 +21,8 @@ function MeshJob () {
 
 function Renderer (gl) {
   this.gl                 = gl
+  this.webglew            = webglew(gl)
 
-  //each mesh render call sets these appropriately and sends to GPU
   this.translateMat       = mat4.create()
   this.rotationMat        = mat4.create()
   this.scaleMat           = mat4.create()
@@ -32,16 +34,19 @@ function Renderer (gl) {
   this.queuePointer       = 0
   this.queue              = [new MeshJob, new MeshJob, new MeshJob]
 
-  this.loadedPrograms        = {}
-  this.bufferedGeometries    = {}
-  this.boundTextures         = {}
-  this.textureChannelPointer = 0
-  this.boundGeometry         = null
-  this.boundProgram          = null
+  this.textureNames       = [
+    "uTexture",
+    "uBump"  
+  ]
+  this.textureUnitPointer = 4
 
-  //TODO: debugging purposes
-  window.boundTextures = this.boundTextures
-  window.renderer      = this
+  this.loadedPrograms     = {}
+  this.bufferedGeometries = {}
+  this.loadedTextures     = {}
+  this.boundGeometry      = null
+  this.boundProgram       = null
+
+  window.renderer = this
 }
 
 Renderer.prototype.loadProgram = function (program) {
@@ -52,15 +57,15 @@ Renderer.prototype.bufferGeometry = function (geometry) {
   this.bufferedGeometries[geometry.name] = new BufferedGeometry(this.gl, geometry)
 }
 
-Renderer.prototype.uploadTexture = function (texture) {
-  var channel      = this.textureChannelPointer
-  var alreadyBound = defined(this.boundTextures[texture.name])
-  
-  //TODO: improve strength of this logic for bounded channels
-  if (!alreadyBound) {
-    this.boundTextures[texture.name] = channel
-    this.textureChannelPointer       = channel === MAX_CHANNEL_INDEX ? 0 : channel + 1
-  }
+Renderer.prototype.loadTexture = function (texture) {
+  this.loadedTextures[texture.name] = new LoadedTexture(
+    this.gl, 
+    this.webglew,
+    this.textureUnitPointer,
+    texture
+  )
+  this.textureUnitPointer++
+
 }
 
 Renderer.prototype.draw = function () {
@@ -98,7 +103,11 @@ Renderer.prototype.drawMesh = function (position, rotation, scale, camera, mesh)
   var programName      = mesh.program.name
   var bufferedGeometry = this.bufferedGeometries[geometryName]
   var loadedProgram    = this.loadedPrograms[programName]
+  var targetTexture
+  var glTexture
+  var textureName
 
+  //TODO: once this is removed, move this to happen only once in draw call
   this.viewMat       = camera.viewMatrix
   this.projectionMat = camera.projectionMatrix
 
@@ -125,10 +134,6 @@ Renderer.prototype.drawMesh = function (position, rotation, scale, camera, mesh)
     console.log("a new program was used")
   }
 
-  gl.enableVertexAttribArray(loadedProgram.attributes.aPosition)
-  gl.enableVertexAttribArray(loadedProgram.attributes.aNormal)
-  gl.enableVertexAttribArray(loadedProgram.attributes.aUV)
-
   gl.uniformMatrix4fv(loadedProgram.uniforms.uModelTransMatrix, false, this.translateMat)
   gl.uniformMatrix4fv(loadedProgram.uniforms.uModelScaleMatrix, false, this.scaleMat)
   gl.uniformMatrix4fv(loadedProgram.uniforms.uModelRotMatrix, false, this.rotationMat)
@@ -136,6 +141,18 @@ Renderer.prototype.drawMesh = function (position, rotation, scale, camera, mesh)
   gl.uniformMatrix4fv(loadedProgram.uniforms.uViewMatrix, false, this.viewMat)
   gl.uniformMatrix4fv(loadedProgram.uniforms.uProjectionMatrix, false, this.projectionMat)
   gl.uniformMatrix4fv(loadedProgram.uniforms.uTransformMatrix, false, this.transformMat)
+
+  for (var t = 0; t < mesh.textures.length; t++) {
+    targetTexture = mesh.textures[t]
+    glTexture     = this.loadedTextures[targetTexture.name]
+    textureName   = this.textureNames[t]
+
+    gl.activeTexture(gl.TEXTURE0 + (t | 0)) 
+    //TODO: how do we actually use multiple textures?  very confusing...
+    //do we need to call bind here?  test w/ multiple meshes
+    gl.bindTexture(gl.TEXTURE_2D, glTexture.glTexture)
+    gl.uniform1i(loadedProgram.uniforms[textureName], t)
+  }
 
   if (this.boundGeometry !== bufferedGeometry) {
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferedGeometry.vertices)

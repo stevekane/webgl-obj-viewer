@@ -9,8 +9,9 @@
       },
       "textureSchemas": [
         {
-          "name": "capsuleMain", 
-          "path": "/meshes/capsule0.jpg"
+          "name":    "capsuleMain", 
+          "channel": "uDiffuse",
+          "path":    "/meshes/capsule0.jpg"
         }
       ],
       "programSchema": {

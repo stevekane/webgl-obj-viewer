@@ -1,6 +1,7 @@
 module.exports = Texture
 
-function Texture (name, image) {
-  this.name  = name
-  this.image = image
+function Texture (name, channel, image) {
+  this.name    = name
+  this.channel = channel
+  this.image   = image
 }

@@ -74,7 +74,7 @@ function loadTexture (cache) {
     }
     else {
       loadImage(textureSchema.path)(function (err, image) {
-        var texture = new Texture(textureSchema.name, image)
+        var texture = new Texture(textureSchema.name, textureSchema.channel, image)
 
         cache.textures[texture.name] = texture
         cb(err, texture)

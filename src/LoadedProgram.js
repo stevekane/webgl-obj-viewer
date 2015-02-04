@@ -21,6 +21,7 @@ function LoadedProgram (gl, vs, fs, drawFn) {
   for (var i = 0; i < numAttributes; ++i) {
     aName             = gl.getActiveAttrib(glProgram, i).name
     attributes[aName] = gl.getAttribLocation(glProgram, aName)
+    gl.enableVertexAttribArray(attributes[aName])
   }
 
   for (var j = 0; j < numUniforms; ++j) {
