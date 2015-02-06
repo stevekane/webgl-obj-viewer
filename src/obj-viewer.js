@@ -7,6 +7,7 @@ var glUtils             = require("./gl-utils")
 var Loader              = require("./Loader")
 var Assemblages         = require("./Assemblages")
 var capsuleSchema       = require("./capsuleSchema.json")
+var swordSchema         = require("./swordSchema.json")
 var loadModelFromSchema = Loader.loadModelFromSchema
 var Renderable          = Assemblages.Renderable
 var canvas              = document.getElementById("canvas")
@@ -20,7 +21,7 @@ var renderables = []
 
 function makeRender () {
   //TODO: This is a temporary placeholder "scale matrix".   not yet implemented
-  var scale = [1,1,5]
+  var scale = [2,2,2]
 
   return function render () {
     var ent
@@ -46,10 +47,9 @@ function makeUpdate () {
   return function update () {
     for (var i = 0; i < renderables.length; i++) {
       renderables[i].physics.rotation[0] += (Math.PI / 180) % (Math.PI * 2)
-      renderables[i].physics.rotation[1] += (Math.PI / 180) % (Math.PI * 2)
-      renderables[i].physics.rotation[2] += (Math.PI / 180) % (Math.PI * 2)
+      //renderables[i].physics.rotation[1] += (Math.PI / 180) % (Math.PI * 2)
+      //renderables[i].physics.rotation[2] += (Math.PI / 180) % (Math.PI * 2)
     }
-    camera.position[2] -= .01
     clock.tick()
   }
 }
@@ -67,8 +67,6 @@ function init () {
     var texture
 
     renderables.push(new Renderable(model, 0, 0, 0))
-    renderables.push(new Renderable(model, 1, 1, 1))
-    renderables.push(new Renderable(model, -1, -1, -1))
 
     for (var j = 0; j < renderables.length; j++) {
       renderable = renderables[j]

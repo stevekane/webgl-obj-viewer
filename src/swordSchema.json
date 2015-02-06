@@ -1,0 +1,30 @@
+{
+  "name": "sword",
+  "meshSchemas": [
+    {
+      "name": "sword",
+      "geometrySchema": {
+        "path": "/meshes/sword/sword.obj",
+        "name": "swordMain"
+      },
+      "textureSchemas": [
+        {
+          "name":    "swordMain", 
+          "channel": "uDiffuse",
+          "path":    "/meshes/sword/handle.jpg"
+        },
+        {
+          "name":    "swordBump", 
+          "channel": "uBump",
+          "path":    "/meshes/sword/handlebump.jpg"
+        }
+      ],
+      "programSchema": {
+        "name":     "standard",
+        "vertex":   "/shaders/standardV.glsl",
+        "fragment": "/shaders/standardF.glsl",
+        "drawSrc":  "/shaders/standardDraw.js"
+      }
+    }
+  ]
+}

@@ -4,6 +4,7 @@ var Program                  = require("./Program")
 var LoadedProgram            = require("./LoadedProgram")
 var BufferedGeometry         = require("./BufferedGeometry")
 var LoadedTexture            = require("./LoadedTexture")
+var NPOTLoadedTexture        = require("./NPOTLoadedTexture")
 var RenderQueue              = require("./RenderQueue")
 var matrixUtils              = require("./matrix-utils")
 var computeTransformMatrix   = matrixUtils.computeTransformMatrix
@@ -52,7 +53,7 @@ var fs = [
 "varying mat4 vRot;",
 "",
 "void main () {",
-"  vec3 light      = vec3(2.0, 2.0, 2.0);",
+"  vec3 light      = vec3(-1.0, 1.0, -1.0);",
 "  vec3 faceDir    = (vRot * vec4(vNormal, 1.0)).xyz;",
 "  float intensity = dot(light, faceDir);",
 "  vec3 texColor   = texture2D(uDiffuse, vUV).xyz;",
@@ -108,9 +109,6 @@ function PBRRenderer (gl) {
 
   //this is the render queue.  it is populated with empty meshjobs
   this.queue              = queue
-
-  //TODO: for debugging
-  window.r = this
 } 
 
 PBRRenderer.prototype.bufferGeometry = function (geometry) {
@@ -119,8 +117,13 @@ PBRRenderer.prototype.bufferGeometry = function (geometry) {
 }
 
 PBRRenderer.prototype.loadTexture = function (texture) {
+  var Ctor = ((texture.image.width % 2 === 0) && (texture.image.height % 2 === 0))
+    ? LoadedTexture
+    : NPOTLoadedTexture 
+
   if (this.loadedTextures[texture.name]) return
-  this.loadedTextures[texture.name] = new LoadedTexture(
+
+  this.loadedTextures[texture.name] = new Ctor(
     this.gl, 
     this.webglew,
     this.textureUnitPointer, 
