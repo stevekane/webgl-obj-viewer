@@ -1,10 +1,8 @@
 var mat4                     = require("gl-mat4")
-var webglew                  = require("webglew")
 var Program                  = require("./Program")
 var LoadedProgram            = require("./LoadedProgram")
 var BufferedGeometry         = require("./BufferedGeometry")
 var LoadedTexture            = require("./LoadedTexture")
-var NPOTLoadedTexture        = require("./NPOTLoadedTexture")
 var RenderQueue              = require("./RenderQueue")
 var matrixUtils              = require("./matrix-utils")
 var computeTransformMatrix   = matrixUtils.computeTransformMatrix
@@ -65,9 +63,9 @@ var fs = [
 module.exports = PBRRenderer
 
 function PBRRenderer (gl) {
-  var program         = new Program("pbr", vs, fs)
-  var loadedProgram   = new LoadedProgram.fromProgram(gl, program)  
-  var queue           = new RenderQueue(2000)
+  var program       = new Program("pbr", vs, fs)
+  var loadedProgram = new LoadedProgram.fromProgram(gl, program)  
+  var queue         = new RenderQueue(2000)
 
   gl.useProgram(loadedProgram.glProgram)
   gl.enable(gl.BLEND)
@@ -77,28 +75,17 @@ function PBRRenderer (gl) {
   gl.clearColor(1.0, 1.0, 1.0, 1.0)
   gl.colorMask(true, true, true, true)
 
-  //refernce to gl context and wrapper for extensions
   this.gl                 = gl
-  this.webglew            = webglew(gl)
 
-  //here we store "cached" buffers by string name for textures and geometries
   this.bufferedGeometries = {}
   this.loadedTextures     = {}
 
-  //increment this to ensure that all loaded textures have unique texture unit
-  //start at 4 so that 0-3 can be used as framebuffers?
   this.textureUnitPointer = 4
 
-  //we need to store references to relevant current bound state
-  //this helps us avoid swapping gl state when not needed
-  //we store a reference to the currently loadedProgram
-  //we store a reference to the currently bound geometry
-  //we store a reference to the currently bound textures BY location!
   this.loadedProgram      = loadedProgram
   this.boundGeometry      = null
   this.textureChannels    = {}
 
-  //these are set during mesh calculations and are uploaded to the GPU per mesh
   this.translateMat       = mat4.create()
   this.rotationMat        = mat4.create()
   this.scaleMat           = mat4.create()
@@ -107,7 +94,6 @@ function PBRRenderer (gl) {
   this.projectionMat      = mat4.create()
   this.transformMat       = mat4.create()
 
-  //this is the render queue.  it is populated with empty meshjobs
   this.queue              = queue
 } 
 
@@ -117,17 +103,12 @@ PBRRenderer.prototype.bufferGeometry = function (geometry) {
 }
 
 PBRRenderer.prototype.loadTexture = function (texture) {
-  var Ctor = ((texture.image.width % 2 === 0) && (texture.image.height % 2 === 0))
-    ? LoadedTexture
-    : NPOTLoadedTexture 
-
   if (this.loadedTextures[texture.name]) return
 
-  this.loadedTextures[texture.name] = new Ctor(
+  this.loadedTextures[texture.name] = new LoadedTexture(
     this.gl, 
-    this.webglew,
     this.textureUnitPointer, 
-    texture
+    texture.image
   )
   this.textureUnitPointer++
 }

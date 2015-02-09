@@ -47,8 +47,6 @@ function makeUpdate () {
   return function update () {
     for (var i = 0; i < renderables.length; i++) {
       renderables[i].physics.rotation[0] += (Math.PI / 180) % (Math.PI * 2)
-      //renderables[i].physics.rotation[1] += (Math.PI / 180) % (Math.PI * 2)
-      //renderables[i].physics.rotation[2] += (Math.PI / 180) % (Math.PI * 2)
     }
     clock.tick()
   }
@@ -63,6 +61,7 @@ function boot () {
 
 function init () {
   loadModelFromSchema(cache, capsuleSchema, function (err, model) {
+    var renderable
     var mesh
     var texture
 
